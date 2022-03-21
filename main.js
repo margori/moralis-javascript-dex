@@ -2,11 +2,12 @@
 Moralis.start({ serverUrl, appId });
 
 const $balanceTable = document.querySelector('.js-token-balances');
-const $selectedToken = document.querySelector('.js-form-token');
-const $amountInput = document.querySelector('.js-form-amount');
+const $selectedToken = document.querySelector('.js-from-token');
+const $amountInput = document.querySelector('.js-from-amount');
 const $submitButton = document.querySelector('.js-submit');
 const $cancelButton = document.querySelector('.js-cancel');
 const $quoteContainer = document.querySelector('.js-quote-container');
+const $tokenSelector = document.querySelector('[name=to-token]');
 
 const wrapTag = (tag, content) => `<${tag}>${content}</${tag}>`;
 
@@ -23,7 +24,7 @@ const initSwapForm = (e) => {
     $amountInput.removeAttribute('disabled');
     $submitButton.removeAttribute('disabled');
     $cancelButton.removeAttribute('disabled');
-    $quoteContainer.innerHTML = ''
+    $quoteContainer.innerHTML = '';
 };
 
 const getStats = async () => {
@@ -114,6 +115,18 @@ const getTicketData = async (tickerList) => {
     return tokenList.filter((t) => tickerList.includes(t.symbol));
 };
 
-getTop10Tokens()
-    .then(getTicketData)
-    .then((r) => console.log(r));
+const renderTokenDropDown = (tokens) => {
+    const options = tokens
+        .map(
+            (t) => `
+            <option value="${t.address}-${t.decimals}">
+                ${t.name}
+            </option>
+            `
+        )
+        .join('');
+
+    $tokenSelector.innerHTML = options;
+};
+
+getTop10Tokens().then(getTicketData).then(renderTokenDropDown);
