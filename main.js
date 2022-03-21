@@ -58,7 +58,7 @@ const getStats = async () => {
                 <td>${Moralis.Units.FromWei(t.balance, t.decimals)}</td>
                 <td>
                     <button
-                        class="js-swap"
+                        class="js-swap btn btn-success"
                         data-address="${t.token_address}"
                         data-symbol="${t.symbol}"
                         data-decimals="${t.decimals}"

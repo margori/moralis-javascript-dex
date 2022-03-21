@@ -6,54 +6,90 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Moralis DEX</title>
         <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+            crossorigin="anonymous"
+        />
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
-        <h1>Moralis School DEX</h1>
-
-        <button id="btn-login">Moralis Metamask Login</button>
-        <button id="btn-logout">Logout</button>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Symbol</th>
-                    <th>Amount</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody class="js-token-balances"></tbody>
-        </table>
-
-        <form action="#" method="post">
-            <div class="form-row">
-                <label>
-                    <span class="js-from-token"></span>
-                    Amount:
-                    <input
-                        type="number"
-                        name="from-amount"
-                        class="js-from-amount"
-                        disabled
-                    />
-                </label>
-                <div class="js-amount-error error"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <h1>Moralis School DEX</h1>
+                </div>
+                <div
+                    class="col-12 col-md-6 d-flex align-items-center justify-content-md-center"
+                >
+                    <button id="btn-login" class="btn btn-sm btn-success">
+                        Moralis Login
+                    </button>
+                    <button id="btn-logout" class="btn btn-sm btn-danger">
+                        Logout
+                    </button>
+                </div>
             </div>
-            <div class="form-row">
-                <label>
-                    Swap to:
-                    <select name="to-token"></select>
-                </label>
-            </div>
-            <div class="form-row">
-                <button type="submit" class="js-submit" disabled>
-                    Get quote
-                </button>
-                <button class="js-cancel" disabled>Cancel</button>
-            </div>
-        </form>
-        <div class="js-quote-container"></div>
+
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Symbol</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody class="js-token-balances"></tbody>
+            </table>
+
+            <form action="#" method="post">
+                <div class="row">
+                    <label class="mb-2">
+                        <span class="js-from-token"></span>
+                        Amount:
+                        <input
+                            type="number"
+                            name="from-amount"
+                            class="js-from-amount"
+                            disabled
+                        />
+                    </label>
+                    <div class="js-amount-error error"></div>
+                </div>
+                <div class="row">
+                    <label class="mb-2">
+                        Swap to:
+                        <select name="to-token"></select>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button
+                            type="submit"
+                            class="js-submit btn btn-success btn-sm"
+                            disabled
+                        >
+                            Get quote
+                        </button>
+                        <button
+                            class="js-cancel btn btn-warning btn-sm"
+                            disabled
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+                <div class="js-quote-container"></div>
+            </form>
+        </div>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"
+        ></script>
 
         <script type="text/javascript" src="./secrets.js"></script>
         <script type="text/javascript" src="./main.js"></script>
