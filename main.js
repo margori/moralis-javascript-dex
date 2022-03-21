@@ -8,6 +8,7 @@ const $submitButton = document.querySelector('.js-submit');
 const $cancelButton = document.querySelector('.js-cancel');
 const $quoteContainer = document.querySelector('.js-quote-container');
 const $tokenSelector = document.querySelector('[name=to-token]');
+const $amountError = document.querySelector('.js-amount-error');
 
 const wrapTag = (tag, content) => `<${tag}>${content}</${tag}>`;
 
@@ -25,6 +26,7 @@ const initSwapForm = (e) => {
     $submitButton.removeAttribute('disabled');
     $cancelButton.removeAttribute('disabled');
     $quoteContainer.innerHTML = '';
+    $amountError.innerText = '';
 };
 
 const getStats = async () => {
@@ -32,8 +34,18 @@ const getStats = async () => {
     let balances = await Moralis.Web3API.account.getTokenBalances(options);
     if (balances.length == 0) {
         balances = [
-            { symbol: '*USDC', balance: 10000, decimals: 2 },
-            { symbol: '*DAI', balance: 15000, decimals: 2 },
+            {
+                token_address: 'aaaa',
+                symbol: '*USDC',
+                balance: 10000,
+                decimals: 2,
+            },
+            {
+                token_address: 'bbbb',
+                symbol: '*DAI',
+                balance: 15000,
+                decimals: 2,
+            },
         ];
     }
 
@@ -89,14 +101,50 @@ login = async () => {
         getStats();
     }
 };
+document.getElementById('btn-login').onclick = login;
 
 logOut = async () => {
     await Moralis.User.logOut();
     console.log('logged out');
 };
-
-document.getElementById('btn-login').onclick = login;
 document.getElementById('btn-logout').onclick = logOut;
+
+// -------- action buttons --------
+
+const formSubmit = (e) => {
+    e.preventDefault();
+
+    $amountError.innerText = '';
+
+    const fromAmount = Number.parseFloat($amountInput.value);
+    const fromMax = Number.parseFloat($selectedToken.dataset.max);
+
+    if (Number.isNaN(fromAmount) || fromAmount > fromMax) {
+        // invalid input
+        $amountError.innerText = 'Invalid amount';
+    }
+};
+$submitButton.onclick = formSubmit;
+
+const formCancel = (e) => {
+    e.preventDefault();
+
+    $submitButton.setAttribute('disabled', '');
+    $cancelButton.setAttribute('disabled', '');
+    $amountInput.setAttribute('disabled', '');
+    $amountInput.value = '';
+
+    delete $selectedToken.innerText;
+    delete $selectedToken.dataset.address;
+    delete $selectedToken.dataset.decimals;
+    delete $selectedToken.dataset.max;
+
+    $quoteContainer.innerHTML = '';
+    $amountError.innerText = '';
+};
+$cancelButton.onclick = formCancel;
+
+// -------- initialization code ----------
 
 const getTop10Tokens = async () => {
     const response = await fetch('https://api.coinpaprika.com/v1/coins');
