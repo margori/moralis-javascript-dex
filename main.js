@@ -2,8 +2,29 @@
 Moralis.start({ serverUrl, appId });
 
 const $balanceTable = document.querySelector('.js-token-balances');
+const $selectedToken = document.querySelector('.js-form-token');
+const $amountInput = document.querySelector('.js-form-amount');
+const $submitButton = document.querySelector('.js-submit');
+const $cancelButton = document.querySelector('.js-cancel');
+const $quoteContainer = document.querySelector('.js-quote-container');
 
 const wrapTag = (tag, content) => `<${tag}>${content}</${tag}>`;
+
+const initSwapForm = (e) => {
+    e.preventDefault();
+    const { symbol, address, decimals, max } = e.target.dataset;
+
+    $selectedToken.innerText = symbol;
+    $selectedToken.dataset.address = address;
+    $selectedToken.dataset.decimals = decimals;
+    $selectedToken.dataset.max = max;
+
+    $amountInput.value = '';
+    $amountInput.removeAttribute('disabled');
+    $submitButton.removeAttribute('disabled');
+    $cancelButton.removeAttribute('disabled');
+    $quoteContainer.innerHTML = ''
+};
 
 const getStats = async () => {
     const options = { chain: 'polygon' };
@@ -22,11 +43,28 @@ const getStats = async () => {
                 <td>${i + 1}</td>
                 <td>${t.symbol}</td>
                 <td>${Moralis.Units.FromWei(t.balance, t.decimals)}</td>
-                <td></td>
+                <td>
+                    <button
+                        class="js-swap"
+                        data-address="${t.token_address}"
+                        data-symbol="${t.symbol}"
+                        data-decimals="${t.decimals}"
+                        data-max="${Moralis.Units.FromWei(
+                            t.balance,
+                            t.decimals
+                        )}"
+                    >
+                        Swap
+                    </button>
+                </td>
               </tr>
             `
         )
         .join('');
+
+    for (let $btn of document.querySelectorAll('.js-swap')) {
+        $btn.addEventListener('click', initSwapForm);
+    }
 };
 
 /* Authentication code */
