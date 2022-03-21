@@ -8,10 +8,22 @@
         <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
     </head>
     <body>
-        <h1>Moralis Hello World!</h1>
+        <h1>Moralis School DEX</h1>
 
         <button id="btn-login">Moralis Metamask Login</button>
         <button id="btn-logout">Logout</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Symbol</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody class="js-token-balances"></tbody>
+        </table>
 
         <script type="text/javascript" src="./secrets.js"></script>
         <script type="text/javascript" src="./main.js"></script>

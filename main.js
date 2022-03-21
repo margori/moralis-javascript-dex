@@ -1,6 +1,34 @@
 /* Moralis init code */
 Moralis.start({ serverUrl, appId });
 
+const $balanceTable = document.querySelector('.js-token-balances');
+
+const wrapTag = (tag, content) => `<${tag}>${content}</${tag}>`;
+
+const getStats = async () => {
+    const options = { chain: 'polygon' };
+    let balances = await Moralis.Web3API.account.getTokenBalances(options);
+    if (balances.length == 0) {
+        balances = [
+            { symbol: '*USDC', balance: 10000, decimals: 2 },
+            { symbol: '*DAI', balance: 15000, decimals: 2 },
+        ];
+    }
+
+    $balanceTable.innerHTML = balances
+        .map(
+            (t, i) => `
+              <tr>
+                <td>${i + 1}</td>
+                <td>${t.symbol}</td>
+                <td>${Moralis.Units.FromWei(t.balance, t.decimals)}</td>
+                <td></td>
+              </tr>
+            `
+        )
+        .join('');
+};
+
 /* Authentication code */
 login = async () => {
     let user = Moralis.User.current();
@@ -11,10 +39,15 @@ login = async () => {
             .then(function (user) {
                 console.log('logged in user:', user);
                 console.log(user.get('ethAddress'));
+                getStats();
             })
             .catch(function (error) {
                 console.log(error);
             });
+    } else {
+        console.log('logged in user:', user);
+        console.log(user.get('ethAddress'));
+        getStats();
     }
 };
 
