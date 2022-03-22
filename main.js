@@ -35,16 +35,22 @@ const getStats = async () => {
     if (balances.length == 0) {
         balances = [
             {
-                token_address: 'aaaa',
+                token_address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
                 symbol: '*USDC',
-                balance: 10000,
-                decimals: 2,
+                balance: 1000000000,
+                decimals: 6,
             },
             {
-                token_address: 'bbbb',
-                symbol: '*DAI',
-                balance: 15000,
-                decimals: 2,
+                token_address: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
+                symbol: '*ETH',
+                balance: 1500000000000000,
+                decimals: 18,
+            },
+            {
+                token_address: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
+                symbol: '*LINK',
+                balance: 150000000000000,
+                decimals: 18,
             },
         ];
     }
@@ -111,6 +117,38 @@ document.getElementById('btn-logout').onclick = logOut;
 
 // -------- action buttons --------
 
+const getQuote = async (fromAmount) => {
+    const fromTokenAddress = $selectedToken.dataset.address;
+    const fromTokenDecimal = $selectedToken.dataset.decimals;
+    const [toTokenAddress, toTokenDecimals] = $tokenSelector.value.split('-');
+
+    const amountInWei = Moralis.Units.Token(fromAmount, fromTokenDecimal);
+
+    try {
+        const quote = await Moralis.Plugins.oneInch.quote({
+            chain: 'polygon', // The blockchain you want to use (eth/bsc/polygon)
+            fromTokenAddress, // The token you want to swap
+            toTokenAddress, // The token you want to receive
+            amount: amountInWei,
+        });
+
+        const toAmount = Moralis.Units.FromWei(
+            quote.toTokenAmount,
+            toTokenDecimals
+        );
+        $quoteContainer.innerHTML = `
+            <p>
+                ${fromAmount} ${quote.fromToken.symbol} = ${toAmount} ${quote.toToken.symbol}
+            </p>
+            <p>
+                Gas fee: ${quote.estimatedGas}
+            </p>
+        `;
+    } catch (error) {
+        $quoteContainer.innerHTML = `<p class"error">The conversion did not succeed.</p>`;
+    }
+};
+
 const formSubmit = (e) => {
     e.preventDefault();
 
@@ -122,7 +160,10 @@ const formSubmit = (e) => {
     if (Number.isNaN(fromAmount) || fromAmount > fromMax) {
         // invalid input
         $amountError.innerText = 'Invalid amount';
+        return;
     }
+
+    getQuote(fromAmount);
 };
 $submitButton.onclick = formSubmit;
 
@@ -156,10 +197,10 @@ const getTop10Tokens = async () => {
 };
 
 const getTicketData = async (tickerList) => {
-    const response = await fetch('https://api.1inch.exchange/v3.0/137/tokens');
-    const tokens = await response.json();
+    const tokens = await Moralis.Plugins.oneInch.getSupportedTokens({
+        chain: 'polygon',
+    });
     const tokenList = Object.values(tokens.tokens);
-
     return tokenList.filter((t) => tickerList.includes(t.symbol));
 };
 
@@ -177,4 +218,7 @@ const renderTokenDropDown = (tokens) => {
     $tokenSelector.innerHTML = options;
 };
 
-getTop10Tokens().then(getTicketData).then(renderTokenDropDown);
+Moralis.initPlugins().then(() => {
+    console.log('Plugins have been initialized');
+    getTop10Tokens().then(getTicketData).then(renderTokenDropDown);
+});
